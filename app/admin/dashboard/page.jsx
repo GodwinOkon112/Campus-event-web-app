@@ -15,8 +15,8 @@ export default function AdminDashboard() {
     };
   return (
       <main >
-        <header className="mb-4">
-          <h4 className=" ml-9 text-[2px] font-extrabold">Admin Dashboard</h4>
+        <header className="mb-10 mt-[5rem]  md:mt-2">
+          <h4 className="  text-[2px] font-extrabold">Admin Dashboard</h4>
         </header>
         {/* <AdminEvents /> */}
         <AdminQuickStats {...statsData} />

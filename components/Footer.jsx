@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function Footer() {
  return (
    <nav className="bg-white border-t sticky  z-50">
-     <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+     <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between md:flex-row flex-col md:items-center gap-[1rem]">
        {/* Logo */}
        <Link href="/" className="text-2xl block font-bold text-dark no-underline">
          Evently

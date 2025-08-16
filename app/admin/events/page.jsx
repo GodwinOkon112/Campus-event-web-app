@@ -140,10 +140,10 @@ export default function CreateEventPage() {
   };
 
   return (
-    <div className="max-w-3xl md:w-full md:mx-auto ml-[2rem]   space-y-8">
+    <div className=" mt-[5rem] md:mt-2 md:w-full   ">
       <h3>Event Management</h3>
       {/* Create Event Form */}
-      <div className="p-6 bg-white shadow rounded mt-[4rem] mb-[6rem]">
+      <div className="p-6 bg-white shadow-sm rounded-sm border mt-[4rem] mb-[6rem]">
         <h4 className="text-2xl font-bold mb-4 ">Create Event</h4>
         <form
           onSubmit={handleSubmit}

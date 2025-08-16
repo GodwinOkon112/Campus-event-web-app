@@ -43,7 +43,7 @@ export default function BotLogsPage() {
   }, [page, search, filter]);
 
   return (
-    <div className=" pl-10 mx-auto p-6 ">
+    <div className="  mx-auto mt-[5rem] md:mt-2">
       <h3 className="text-[1rem] font-extrabold mb-6">Bot Detection Logs</h3>
 
       <div className="flex gap-4 mb-15 mt-6">
@@ -77,7 +77,7 @@ export default function BotLogsPage() {
               <AccordionItem
                 key={log._id}
                 value={`log-${log._id}`}
-                className={`border rounded shadow-sm ${
+                className={` shadow-sm rounded-sm border ${
                   log.detectionResult === "Bot" ? "bg-red-50" : "bg-green-50"
                 }`}
               >

@@ -41,18 +41,18 @@ export default function AdminOverview() {
   const botTrends = overview.botTrends || [];
 
   return (
-    <div className="p-6 space-y-8">
+    <div className=" space-y-8">
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-[4rem]">
-        <div className="bg-white shadow rounded-lg p-4">
+        <div className="bg-white shadow-sm rounded-sm border p-4">
           <h5 className=" font-semibold">Total Tickets</h5>
           <p className="text-2xl">{overview.totalTickets ?? 0}</p>
         </div>
-        <div className="bg-white shadow rounded-lg p-4">
+        <div className="bg-white shadow-sm rounded-sm border p-4">
           <h5 className="text-lg font-semibold">Total Events</h5>
           <p className="text-2xl">{overview.totalEvents ?? 0}</p>
         </div>
-        <div className="bg-white shadow rounded-lg p-4">
+        <div className="bg-white shadow-sm rounded-sm border p-4">
           <h5 className="text-lg font-semibold">Total Users</h5>
           <p className="text-2xl">{overview.totalUsers ?? 0}</p>
         </div>
@@ -60,7 +60,7 @@ export default function AdminOverview() {
 
       {/* Recent Bot Analysis */}
       <h4 className="text-xl font-semibold mb-3 ">Recent Bot Analysis</h4>
-      <div className="bg-white shadow rounded-lg p-6 mb-[4rem]">
+      <div className="bg-white shadow-sm rounded-sm border p-6 mb-[4rem]">
         {recentBotLogs.length > 0 ? (
           <ul className="divide-y divide-gray-200">
             {recentBotLogs.map((log) => (
@@ -87,7 +87,7 @@ export default function AdminOverview() {
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Line Chart - Bots vs Humans */}
-        <div className="bg-white shadow rounded-lg p-6 ">
+        <div className="bg-white shadow-sm rounded-sm border p-6 ">
           <h5 className="text-xl font-semibold mb-3 ">
             Bot vs Human (Last 7 Days)
           </h5>
@@ -121,7 +121,7 @@ export default function AdminOverview() {
         </div>
 
         {/* Bar Chart - Volume */}
-        <div className="bg-white shadow rounded-lg p-6">
+        <div className="bg-white shadow-sm rounded-sm border p-6">
           <h5 className="text-xl font-semibold mb-4">Detection Volume</h5>
           {botTrends.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
@@ -142,7 +142,7 @@ export default function AdminOverview() {
       </div>
       {/* Recent Bookings */}
         <h4 className="text-xl font-semibold mb-3 mt-5">Recent Bookings</h4>
-      <div className="bg-white shadow rounded-lg p-6">
+      <div className="bg-white shadow-sm rounded-sm border p-6">
         {recentBookings.length > 0 ? (
           <ul className="divide-y divide-gray-200">
             {recentBookings.map((booking) => (
@@ -166,7 +166,7 @@ export default function AdminOverview() {
 
       {/* Recent Events */}
         <h4 className="text-xl font-semibold mb-4 mt-5">Recent Events</h4>
-      <div className="bg-white shadow rounded-lg p-6">
+      <div className="bg-white shadow-sm rounded-sm border p-6">
         {recentEvents.length > 0 ? (
           <ul className="divide-y divide-gray-200">
             {recentEvents.map((event) => (
