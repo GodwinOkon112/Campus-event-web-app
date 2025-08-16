@@ -31,13 +31,13 @@ export default function AdminSidebar() {
       className="
         fixed top-0 left-0 bottom-0 z-50
         bg-dark text-gray-100 flex flex-col
-        w-18 md:w-90
+        w-18 md:w-70
         border-r border-blue-950
         transition-width duration-300 ease-in-out
       "
     >
       {/* Brand */}
-      <div className="flex items-center justify-center md:justify-start px-2 md:px-6 py-6 border-b border-gray-700">
+      <div className="flex items-center justify-center md:justify-start px-2 md:px-6 py-6 border-b border-gray-700 ">
         <span className="text-xl font-bold text-white">
           <span className="md:hidden">E</span>
           <span className="hidden md:inline pl-[3rem]">Evently</span>
