@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import PaystackPop from "@paystack/inline-js";
-import useBotTracking from "../components/useBotTrackings"; // updated hook
+import useBotTracking from "../components/useBotTrackings";
 import toast from "react-hot-toast";
 
 export default function EventDetails({ event }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
   const [loading, setLoading] = useState(false);
-  const getTrackingData = useBotTracking(); // returns full tracking
+  const [botModal, setBotModal] = useState(null); // 🚨 Store bot detection details
+  const getTrackingData = useBotTracking();
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -30,7 +31,7 @@ export default function EventDetails({ event }) {
       email: form.email,
       phone: form.phone || "",
       submissionTimeMs: trackingData.submissionTimeMs,
-      keystrokeIntervals: trackingData.keystrokeIntervals, // send all fields
+      keystrokeIntervals: trackingData.keystrokeIntervals,
       mouseMovements: trackingData.mouseMovements,
       clickCount: trackingData.clickCount,
       userAgent: navigator.userAgent,
@@ -57,13 +58,13 @@ export default function EventDetails({ event }) {
       return;
     }
 
-    // 3️⃣ Stop if bot detected
+    // 3️⃣ Stop + Show Modal if bot detected
     if (
       botData.isBot ||
       botData.detection?.isBot ||
       botData.detectionResult === "Bot"
     ) {
-      toast.error(`Booking blocked: ${botData.reason || "Bot detected"}.`);
+      setBotModal(botData); // open modal with details
       setLoading(false);
       return;
     }
@@ -198,6 +199,37 @@ export default function EventDetails({ event }) {
           {loading ? "Checking..." : `Pay ₦${event.price}`}
         </button>
       </div>
+
+      {/* 🚨 Bot Detection Modal */}
+      {botModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+            <h2 className="text-xl font-bold text-red-600 mb-4">
+             Booking Blocked: Bot Detected
+            </h2>
+            <p className="text-gray-700 mb-4">
+              Your booking attempt was flagged as a bot.
+            </p>
+
+            <ul className="list-disc pl-6 space-y-1 text-sm text-gray-600">
+              {botModal.reason && <li>{botModal.reason}</li>}
+              {botModal.details &&
+                Object.entries(botModal.details).map(([key, value]) => (
+                  <li key={key}>
+                    <strong>{key}:</strong> {String(value)}
+                  </li>
+                ))}
+            </ul>
+
+            <button
+              onClick={() => setBotModal(null)}
+              className="mt-6 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

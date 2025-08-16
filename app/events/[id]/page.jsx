@@ -19,7 +19,6 @@ export default async function EventPage({ params }) {
     <>
     <Navbar />
    <EventDetails event={{ ...event, _id: event._id.toString() }} />;
-  <Footer />
   </>
   )
 
