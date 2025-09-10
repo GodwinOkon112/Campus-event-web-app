@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Loader2, Trash2, Pencil, X } from "lucide-react";
 
-export default function CreateEventPage() {
+export default function CreateMatchPage() {
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -14,7 +14,7 @@ export default function CreateEventPage() {
     image: null,
   });
   const [loading, setLoading] = useState(false);
-  const [events, setEvents] = useState([]);
+  const [matches, setMatches] = useState([]);
   const [fetching, setFetching] = useState(false);
 
   // Edit modal state
@@ -22,20 +22,20 @@ export default function CreateEventPage() {
   const [editForm, setEditForm] = useState({});
   const [updating, setUpdating] = useState(false);
 
-  const fetchEvents = async () => {
+  const fetchMatches = async () => {
     setFetching(true);
     try {
-      const res = await fetch("/api/events");
+      const res = await fetch("/api/events"); // still points to /events backend
       const data = await res.json();
-      setEvents(data);
+      setMatches(data);
     } catch (error) {
-      toast.error("Failed to load events");
+      toast.error("Failed to load matches");
     }
     setFetching(false);
   };
 
   useEffect(() => {
-    fetchEvents();
+    fetchMatches();
   }, []);
 
   const handleChange = (e) => {
@@ -61,7 +61,7 @@ export default function CreateEventPage() {
       });
 
       if (res.ok) {
-        toast.success("✅ Event created successfully!");
+        toast.success("✅ Match created successfully!");
         setForm({
           title: "",
           description: "",
@@ -71,9 +71,9 @@ export default function CreateEventPage() {
           status: "Upcoming",
           image: null,
         });
-        fetchEvents();
+        fetchMatches();
       } else {
-        toast.error("❌ Failed to create event");
+        toast.error("❌ Failed to create match");
       }
     } catch (error) {
       toast.error("⚠️ Something went wrong");
@@ -82,23 +82,23 @@ export default function CreateEventPage() {
     }
   };
 
-  const deleteEvent = async (id) => {
-    if (!confirm("Are you sure you want to delete this event?")) return;
+  const deleteMatch = async (id) => {
+    if (!confirm("Are you sure you want to delete this match?")) return;
     try {
       const res = await fetch(`/api/events/${id}`, { method: "DELETE" });
       if (res.ok) {
-        toast.success("🗑️ Event deleted");
-        fetchEvents();
+        toast.success("🗑️ Match deleted");
+        fetchMatches();
       } else {
-        toast.error("Failed to delete event");
+        toast.error("Failed to delete match");
       }
     } catch {
-      toast.error("Error deleting event");
+      toast.error("Error deleting match");
     }
   };
 
-  const openEditModal = (event) => {
-    setEditForm(event);
+  const openEditModal = (match) => {
+    setEditForm(match);
     setEditModalOpen(true);
   };
 
@@ -126,11 +126,11 @@ export default function CreateEventPage() {
       });
 
       if (res.ok) {
-        toast.success("✏️ Event updated!");
-        fetchEvents();
+        toast.success("✏️ Match updated!");
+        fetchMatches();
         setEditModalOpen(false);
       } else {
-        toast.error("❌ Failed to update event");
+        toast.error("❌ Failed to update match");
       }
     } catch (error) {
       toast.error("⚠️ Update error");
@@ -140,25 +140,25 @@ export default function CreateEventPage() {
   };
 
   return (
-    <div className=" mt-[5rem] md:mt-2 md:w-full   ">
-      <h3>Event Management</h3>
-      {/* Create Event Form */}
+    <div className="mt-[5rem] md:mt-2 md:w-full">
+      <h3>Match Management</h3>
+      {/* Create Match Form */}
       <div className="p-6 bg-white shadow-sm rounded-sm border mt-[4rem] mb-[6rem]">
-        <h4 className="text-2xl font-bold mb-4 ">Create Event</h4>
+        <h4 className="text-2xl font-bold mb-4">Create Match</h4>
         <form
           onSubmit={handleSubmit}
           className="space-y-4 flex flex-col gap-y-2"
         >
           <input
             name="title"
-            placeholder="Title"
+            placeholder="Match Title (e.g., Team A vs Team B)"
             className="w-full p-2 border rounded"
             onChange={handleChange}
             value={form.title}
           />
           <textarea
             name="description"
-            placeholder="Description"
+            placeholder="Match Details"
             className="w-full p-2 border rounded"
             onChange={handleChange}
             value={form.description}
@@ -180,7 +180,7 @@ export default function CreateEventPage() {
           <input
             type="number"
             name="price"
-            placeholder="Price"
+            placeholder="Ticket Price"
             className="w-full p-2 border rounded"
             onChange={handleChange}
             value={form.price}
@@ -197,63 +197,63 @@ export default function CreateEventPage() {
           <input
             type="file"
             name="image"
-            className="w-full p-2 border rounded "
+            className="w-full p-2 border rounded"
             onChange={handleChange}
           />
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-dark hover:bg-gray-700  text-white py-2  flex items-center justify-center"
+            className="w-full bg-dark hover:bg-gray-700 text-white py-2 flex items-center justify-center"
           >
             {loading ? (
               <>
                 <Loader2 className="animate-spin h-5 w-5 mr-2" /> Creating...
               </>
             ) : (
-              "Create Event"
+              "Create Match"
             )}
           </button>
         </form>
       </div>
 
-      {/* Event Management */}
+      {/* Match Management */}
       <div>
-        <h4 className="text-xl font-bold mb-4 mt-7">Manage Events</h4>
+        <h4 className="text-xl font-bold mb-4 mt-7">Manage Matches</h4>
         <hr />
         {fetching ? (
-          <p>Loading events...</p>
-        ) : events.length === 0 ? (
-          <p className="text-gray-500">No events found</p>
+          <p>Loading matches...</p>
+        ) : matches.length === 0 ? (
+          <p className="text-gray-500">No matches found</p>
         ) : (
-          <div className="space-y-4  flex flex-wrap">
-            {events.map((event) => (
+          <div className="space-y-4 flex flex-wrap">
+            {matches.map((match) => (
               <div
-                key={event._id}
+                key={match._id}
                 className="p-2 border rounded flex justify-between items-center flex-col"
               >
-                <div className="">
-                  {event.image ? (
+                <div>
+                  {match.image ? (
                     <img
-                      src={event.image}
-                      alt={event.title || "Event Image"}
-                      className=" mb-4 h-auto w-auto object-cover"
+                      src={match.image}
+                      alt={match.title || "Match Image"}
+                      className="mb-4 h-auto w-auto object-cover"
                     />
                   ) : (
-                    <div className="rounded-lg mb-2 w-full h-48 bg-green-600 flex items-center justify-center text-gray-400 ">
+                    <div className="rounded-lg mb-2 w-full h-48 bg-green-600 flex items-center justify-center text-gray-400">
                       No Image
                     </div>
                   )}
                   <div className="flex justify-between items-center">
-                    <h6 className="font-extrabold">{event.title}</h6>
+                    <h6 className="font-extrabold">{match.title}</h6>
                     <div className="flex gap-3">
                       <button
-                        onClick={() => deleteEvent(event._id)}
+                        onClick={() => deleteMatch(match._id)}
                         className="text-red-600 hover:text-red-800"
                       >
                         <Trash2 size={18} />
                       </button>
                       <button
-                        onClick={() => openEditModal(event)}
+                        onClick={() => openEditModal(match)}
                         className="text-blue-600 hover:text-blue-800"
                       >
                         <Pencil size={18} />
@@ -261,7 +261,7 @@ export default function CreateEventPage() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">
-                    {event.date} • {event.status}
+                    {match.date} • {match.status}
                   </p>
                 </div>
               </div>
@@ -270,7 +270,7 @@ export default function CreateEventPage() {
         )}
       </div>
 
-      {/* Edit Event Modal */}
+      {/* Edit Match Modal */}
       {editModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
@@ -280,18 +280,18 @@ export default function CreateEventPage() {
             >
               <X size={20} />
             </button>
-            <h2 className="text-xl font-bold mb-4">Edit Event</h2>
+            <h2 className="text-xl font-bold mb-4">Edit Match</h2>
             <form onSubmit={handleUpdate} className="space-y-4">
               <input
                 name="title"
-                placeholder="Title"
+                placeholder="Match Title"
                 className="w-full p-2 border rounded"
                 onChange={handleEditChange}
                 value={editForm.title || ""}
               />
               <textarea
                 name="description"
-                placeholder="Description"
+                placeholder="Match Details"
                 className="w-full p-2 border rounded"
                 onChange={handleEditChange}
                 value={editForm.description || ""}
@@ -313,7 +313,7 @@ export default function CreateEventPage() {
               <input
                 type="number"
                 name="price"
-                placeholder="Price"
+                placeholder="Ticket Price"
                 className="w-full p-2 border rounded"
                 onChange={handleEditChange}
                 value={editForm.price || ""}
@@ -344,7 +344,7 @@ export default function CreateEventPage() {
                     Updating...
                   </>
                 ) : (
-                  "Update Event"
+                  "Update Match"
                 )}
               </button>
             </form>

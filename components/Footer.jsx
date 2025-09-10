@@ -1,25 +1,23 @@
-'use client';
-import { useState } from "react";
+"use client";
 import Link from "next/link";
 
-
 export default function Footer() {
- return (
-   <nav className="bg-white border-t sticky  z-50">
-     <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between md:flex-row flex-col md:items-center gap-[1rem]">
-       {/* Logo */}
-       <Link href="/" className="text-2xl block font-bold text-dark no-underline">
-         Evently
-       </Link>
+  return (
+    <footer className="bg-white border-t z-50">
+      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between md:flex-row flex-col md:items-center gap-4">
+        {/* Logo */}
+        <Link
+          href="/"
+          className="text-2xl font-extrabold text-green-700 no-underline"
+        >
+          Evently
+        </Link>
 
-       {/* Menu (Large Screen) */}
-       
-         <p className="text-sm font-bold">
-           &copy; {new Date().getFullYear()} UniTicket. All rights reserved.
-         </p>
-
-        
-     </div>
-   </nav>
- );
+        {/* Copyright */}
+        <p className="text-sm font-bold text-gray-600">
+          &copy; {new Date().getFullYear()} Evently. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  );
 }

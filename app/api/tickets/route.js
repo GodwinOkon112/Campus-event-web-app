@@ -6,16 +6,25 @@ export default async function handler(req, res) {
   await dbConnect();
 
   if (req.method === "POST") {
-    const { regNumber, studentName, eventId } = req.body;
+    const {
+      studentName,
+      studentEmail,
+      studentPhone,
+      eventId,
+      reference,
+      amount,
+    } = req.body;
 
-    if (!regNumber || !studentName || !eventId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing required fields" });
+    // ✅ Validate required fields
+    if (!studentName || !studentEmail || !eventId || !reference || !amount) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
     }
 
     try {
-      // Optional: check if event exists and is upcoming
+      // ✅ Check if event exists and is upcoming
       const event = await Event.findById(eventId);
       if (!event || event.status !== "Upcoming") {
         return res
@@ -23,31 +32,32 @@ export default async function handler(req, res) {
           .json({ success: false, message: "Invalid or inactive event" });
       }
 
-      // Optional: check if ticket already booked by this regNumber for this event
+      // ✅ Optional: check if this email already booked a ticket for the event
       const existingTicket = await Ticket.findOne({
-        regNumber,
+        studentEmail,
         event: eventId,
       });
       if (existingTicket) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "Ticket already booked for this event",
-          });
+        return res.status(400).json({
+          success: false,
+          message: "Ticket already booked for this event",
+        });
       }
 
+      // ✅ Create new ticket
       const ticket = await Ticket.create({
-        regNumber,
         studentName,
+        studentEmail,
+        studentPhone,
         event: eventId,
-        paymentStatus: "Pending",
+        reference,
+        amount,
+        paidAt: new Date(), // or leave null until payment confirmed
       });
 
-      // Return ticket info (or payment initiation data here)
       return res.status(201).json({ success: true, ticket });
     } catch (error) {
-      console.error(error);
+      console.error("Error creating ticket:", error);
       return res
         .status(500)
         .json({ success: false, message: "Failed to book ticket" });
@@ -55,9 +65,15 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "GET") {
-    // Optionally return all tickets (admin only)
-    // For now, reject access to keep it secure
-    return res.status(403).json({ success: false, message: "Forbidden" });
+    try {
+      const tickets = await Ticket.find().populate("event");
+      return res.status(200).json({ success: true, tickets });
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to fetch tickets" });
+    }
   }
 
   return res

@@ -31,15 +31,20 @@ export default function Signin() {
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-lg shadow-md w-96"
       >
-        <h2 className="text-xl font-bold mb-4">Admin Login</h2>
+        <h2 className="text-xl font-bold mb-4">
+          Football Ticketing Admin Login
+        </h2>
+
         {error && <p className="text-red-500 mb-2">{error}</p>}
+
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Admin Email"
           className="w-full p-2 border rounded mb-2"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
+
         <input
           type="password"
           placeholder="Password"
@@ -47,9 +52,11 @@ export default function Signin() {
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
+
         <button className="w-full bg-blue-600 text-white p-2 rounded">
           Login
         </button>
+
         <p className="mt-2 text-sm">
           Don&apos;t have an account?{" "}
           <a href="/signup" className="text-blue-600">

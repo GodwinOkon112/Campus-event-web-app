@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function AdminTicketsPage() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [expandedTicket, setExpandedTicket] = useState(null); // For accordion
 
   useEffect(() => {
@@ -39,11 +39,11 @@ export default function AdminTicketsPage() {
 
   return (
     <div className="mt-[5rem] md:mt-2">
-      <h3 className="text-2xl font-bold mb-4">All Tickets</h3>
+      <h3 className="text-2xl font-bold mb-4">All Match Tickets</h3>
 
       <div className="mb-4">
         <Input
-          placeholder="Search by student or event..."
+          placeholder="Search by fan or match..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-3/4 md:w-1/3"
@@ -56,7 +56,7 @@ export default function AdminTicketsPage() {
         </div>
       ) : filteredTickets.length === 0 ? (
         <p className="text-center text-muted-foreground py-10">
-          No tickets found.
+          No match tickets found.
         </p>
       ) : (
         <div className="space-y-3">
@@ -83,9 +83,9 @@ export default function AdminTicketsPage() {
                   </button>
 
                   {isExpanded && (
-                    <div className="mt-3 space-y-1 text-sm text-gray-200">
+                    <div className="mt-3 space-y-1 text-sm text-gray-500">
                       <p>
-                        <span className="font-semibold">Email:</span>{" "}
+                        <span className="font-semibold">Fan Email:</span>{" "}
                         {ticket.studentEmail}
                       </p>
                       <p>
@@ -93,15 +93,15 @@ export default function AdminTicketsPage() {
                         {ticket.studentPhone || "-"}
                       </p>
                       <p>
-                        <span className="font-semibold">Event:</span>{" "}
+                        <span className="font-semibold">Match:</span>{" "}
                         {ticket.event?.title || "N/A"}
                       </p>
                       <p>
-                        <span className="font-semibold">Amount:</span> ₦
+                        <span className="font-semibold">Ticket Price:</span> ₦
                         {ticket.amount.toLocaleString()}
                       </p>
                       <p>
-                        <span className="font-semibold">Paid At:</span>{" "}
+                        <span className="font-semibold">Purchased At:</span>{" "}
                         {new Date(ticket.paidAt).toLocaleString()}
                       </p>
                     </div>

@@ -9,7 +9,7 @@ import Script from "next/script";
 const openSans = Open_Sans({
   variable: "--font-open-sans",
   subsets: ["latin"],
-  weight: ["400", "600", "700"], // choose weights you need
+  weight: ["400", "600", "700"],
 });
 
 export const metadata = {
@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* Load external scripts properly */}
+        {/* Other external scripts */}
         <Script
           src="https://widget.cloudinary.com/v2.0/global/all.js"
           strategy="afterInteractive"
@@ -34,14 +34,31 @@ export default function RootLayout({ children }) {
           src="https://js.paystack.co/v2/inline.js"
           strategy="afterInteractive"
         />
+
+        {/* ✅ FRAUD0 Main Tag */}
+        <Script
+          src="https://api.fraud0.com/api/v2/fz.js?cid=e682c0ef-f725-4237-83fd-ad8a60719d01"
+          strategy="afterInteractive"
+        />
+        <Script id="fraud0-pixel" strategy="afterInteractive">
+          {`
+            (function(){
+              var i=document.createElement('img');
+              i.alt=' ';
+              i.src='https://api.fraud0.com/api/v2/pixel?cid=e682c0ef-f725-4237-83fd-ad8a60719d01&cb='
+                + Math.random() + '.' + (new Date()).getTime();
+              i.width=i.height=1;
+              i.style='width:1px;height:1px;display:inline;position:absolute;margin-top:-1px;';
+              document.body.append(i);
+            })();
+          `}
+        </Script>
+        {/* ✅ End of FRAUD0 Main Tag */}
       </head>
       <body className={`${openSans.variable} font-sans`}>
-        {/* Optional: Navbar and Footer here */}
-        {/* <Navbar /> */}
-        <div className="min-h-screen text-gray-900 w-full max-w-7xl mx-auto pb-6 no-underline">
+        <div className="min-h-screen text-gray-900 w-full max-w-7xl mx-auto pb-6 no-underline ">
           {children}
         </div>
-        {/* <Footer /> */}
       </body>
     </html>
   );

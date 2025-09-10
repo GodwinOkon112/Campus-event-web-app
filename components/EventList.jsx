@@ -2,67 +2,67 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-export default function EventList() {
-  const [events, setEvents] = useState([]);
+export default function MatchList() {
+  const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch events from API
+  // Fetch matches from API
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchMatches = async () => {
       try {
-        const res = await fetch("/api/events");
+        const res = await fetch("/api/events"); // still using /api/events
         const data = await res.json();
-        setEvents(data);
+        setMatches(data);
       } catch (error) {
-        console.error("Error fetching events:", error);
+        console.error("Error fetching matches:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchEvents();
+    fetchMatches();
   }, []);
 
-  // Filter events based on search term
-  const filteredEvents = events.filter(
-    (event) =>
-      event.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter matches based on search term
+  const filteredMatches = matches.filter(
+    (match) =>
+      match.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      match.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (loading) return <p className="text-center py-10">Loading events...</p>;
-  if (!events.length)
-    return <p className="text-center py-10 text-gray-500">No events found.</p>;
+  if (loading) return <p className="text-center py-10">Loading matches...</p>;
+  if (!matches.length)
+    return <p className="text-center py-10 text-gray-500">No matches found.</p>;
 
   return (
     <>
       <div className="flex flex-col sm:flex-row items-center justify-between px-4 pt-[4rem] gap-3">
-        <h4 className="text-xl font-bold" id="featured">
-          Featured Event
+        <h4 className="text-xl font-bold text-green-700" id="featured">
+          Featured Matches
         </h4>
         <input
           type="text"
-          placeholder="Search events..."
+          placeholder="Search matches..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border rounded px-3 py-2 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="border rounded px-3 py-2 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-green-600"
         />
       </div>
-      <hr />
+      <hr className="border-green-200" />
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 p-4">
-        {filteredEvents.length > 0 ? (
-          filteredEvents.map((event) => (
+        {filteredMatches.length > 0 ? (
+          filteredMatches.map((match) => (
             <div
-              key={event._id}
+              key={match._id}
               className="border rounded shadow hover:shadow-lg transition p-2 flex flex-col"
             >
-              {/* Event Image */}
-              {event.image ? (
+              {/* Match Image */}
+              {match.image ? (
                 <img
-                  src={event.image}
-                  alt={event.title || "Event Image"}
+                  src={match.image}
+                  alt={match.title || "Match Image"}
                   className="rounded rounded-b-none mb-4 w-full h-48 object-cover"
                 />
               ) : (
@@ -71,49 +71,49 @@ export default function EventList() {
                 </div>
               )}
 
-              {/* Event Title */}
-              <h4 className="text-[2em] font-semibold mb-2">
-                {event.title || "Untitled Event"}
+              {/* Match Title */}
+              <h4 className="text-[2em] font-semibold mb-2 text-gray-900">
+                {match.title || "Untitled Match"}
               </h4>
 
-              {/* Event description */}
-              <p className="mb-2 text-[16px]">
-                {event.description
-                  ? event.description.slice(0, 100) + "..."
+              {/* Match description */}
+              <p className="mb-2 text-[16px] text-gray-700">
+                {match.description
+                  ? match.description.slice(0, 100) + "..."
                   : "No description available"}
               </p>
 
-              {/* Event Date & Time */}
+              {/* Match Date & Time */}
               <p className="text-sm text-gray-500 mb-2">
-                {event.date
-                  ? `${new Date(event.date).toLocaleDateString()} at ${
-                      event.time || "TBD"
+                {match.date
+                  ? `${new Date(match.date).toLocaleDateString()} at ${
+                      match.time || "TBD"
                     }`
                   : "Date TBD"}
               </p>
 
-              {/* Event Price */}
-              <p className="font-bold text-blue-600 mb-2">
-                {event.price ? `₦${event.price}` : "Free"}
+              {/* Match Ticket Price */}
+              <p className="font-bold text-green-600 mb-2">
+                {match.price ? `₦${match.price}` : "Free"}
               </p>
 
-              {/* Event Status */}
+              {/* Match Status */}
               <span
-                className={`text-xs px-2 py-1 self-start mb-3 ${
-                  event.status === "Upcoming"
+                className={`text-xs px-2 py-1 self-start mb-3 rounded ${
+                  match.status === "Upcoming"
                     ? "bg-green-100 text-green-700"
-                    : event.status === "Ongoing"
+                    : match.status === "Ongoing"
                       ? "bg-yellow-100 text-yellow-700"
                       : "bg-gray-200 text-gray-600"
                 }`}
               >
-                {event.status || "Unknown"}
+                {match.status || "Unknown"}
               </span>
 
-              {/* View Event Button */}
+              {/* View Match Button */}
               <Link
-                href={`/events/${event._id}`}
-                className="mt-auto text-center bg-dark text-white px-4 py-2 hover:bg-gray-700 transition"
+                href={`/events/${match._id}`}
+                className="mt-auto text-center bg-green-700 text-white px-4 py-2 hover:bg-green-800 transition rounded"
               >
                 View Details
               </Link>
@@ -121,7 +121,7 @@ export default function EventList() {
           ))
         ) : (
           <p className="col-span-full text-center text-gray-500">
-            No events match your search.
+            No matches match your search.
           </p>
         )}
       </div>

@@ -11,15 +11,15 @@ export default async function EventPage({ params }) {
   const event = await Event.findById(id).lean();
 
   if (!event) {
-    return <p className="text-center py-10 text-red-500">Event not found.</p>;
+    return <p className="text-center py-10 text-red-500">Match not found.</p>;
   }
 
   // Convert MongoDB _id to string for client component
-  return(
+  return (
     <>
-    <Navbar />
-   <EventDetails event={{ ...event, _id: event._id.toString() }} />;
-  </>
-  )
-
+      <Navbar />
+      <EventDetails event={{ ...event, _id: event._id.toString() }} />
+      <Footer />
+    </>
+  );
 }

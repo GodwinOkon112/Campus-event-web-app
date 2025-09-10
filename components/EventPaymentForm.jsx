@@ -71,7 +71,7 @@ export default function EventPaymentForm({ event }) {
       <input
         type="text"
         name="phone"
-        placeholder="Phone (optional)"
+        placeholder="Phone"
         value={form.phone}
         onChange={handleChange}
         className="w-full border rounded p-2 mb-3"

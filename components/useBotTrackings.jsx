@@ -1,10 +1,10 @@
-// components/useBotTracking.js
+
 import { useEffect, useRef, useState } from "react";
 
 export default function useBotTracking() {
   const [clickCount, setClickCount] = useState(0);
   const mouseMovements = useRef([]);
-  const keyIntervals = useRef({}); // store intervals per input field
+  const keyIntervals = useRef({}); 
   const lastKeyTime = useRef({});
   const startTime = useRef(Date.now());
 
@@ -23,7 +23,7 @@ export default function useBotTracking() {
     };
 
     const handleKeyDown = (e) => {
-      // Only track inputs or textareas
+   
       const target = e.target;
       if (!target || !["INPUT", "TEXTAREA"].includes(target.tagName)) return;
 
