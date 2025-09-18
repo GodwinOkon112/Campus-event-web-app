@@ -1,84 +1,137 @@
-import { NextResponse } from "next/server";
-import { execFile } from "child_process";
-import path from "path";
-import dbConnect from "@/lib/dbConnect";
-import BotLog from "@/models/BotLog";
+// ------------------------------
+// Bot Detection Helper Functions
+// ------------------------------
+
+function isMissingFields(userData) {
+  const requiredFields = ["name", "email", "phone"];
+  return requiredFields.some((f) => !String(userData[f] || "").trim());
+}
+
+function isInvalidEmail(email) {
+  const regex = /^[^@]+@[^@]+\.[^@]+$/;
+  return !regex.test(email);
+}
+
+function isInvalidPhone(phone) {
+  const digits = (phone || "").replace(/\D/g, "");
+  return digits.length < 10;
+}
+
+function containsSpamKeywords(text) {
+  const spamKeywords = [
+    "buy now",
+    "click here",
+    "free money",
+    "viagra",
+    "lottery",
+    "cheap pills",
+  ];
+  const lower = (text || "").toLowerCase();
+  return spamKeywords.some((kw) => lower.includes(kw));
+}
+
+function isSubmissionTooFast(submissionTimeMs) {
+  return submissionTimeMs < 15000;
+}
+
+function isTypingPatternSuspicious(perFieldIntervals) {
+  if (!perFieldIntervals) return false;
+
+  for (const intervals of Object.values(perFieldIntervals)) {
+    if (!intervals || intervals.length === 0) continue;
+
+    const mean = intervals.reduce((sum, v) => sum + v, 0) / intervals.length;
+    const variance =
+      intervals.reduce((sum, v) => sum + (v - mean) ** 2, 0) / intervals.length;
+    const stdev = Math.sqrt(variance);
+
+    if (stdev < 15) {
+      return true; // very uniform typing → suspicious
+    }
+  }
+  return false;
+}
+
+function isUserAgentSuspicious(userAgent = "") {
+  const botSignatures = [
+    "bot",
+    "crawler",
+    "spider",
+    "scraper",
+    "curl",
+    "wget",
+    "python-requests",
+  ];
+  const uaLower = userAgent.toLowerCase();
+  return botSignatures.some((sig) => uaLower.includes(sig));
+}
+
+function isLanguageSuspicious(lang = "") {
+  return !lang || ["c", "xx", "null"].includes(lang.toLowerCase());
+}
+
+// ------------------------------
+// Main Bot Detection Logic
+// ------------------------------
+
+function checkBot(userData = {}) {
+  const reasons = [];
+
+  if (isMissingFields(userData)) {
+    reasons.push("Missing required fields");
+  }
+  if (isInvalidEmail(userData.email || "")) {
+    reasons.push("Invalid email");
+  }
+  if (isInvalidPhone(userData.phone || "")) {
+    reasons.push("Invalid phone");
+  }
+
+  const combinedText = `${userData.name || ""} ${userData.email || ""}`;
+  if (containsSpamKeywords(combinedText)) {
+    reasons.push("Contains spam keywords");
+  }
+
+  if (isSubmissionTooFast(userData.submissionTimeMs || 2000)) {
+    reasons.push("Submission too fast");
+  }
+
+  if (isTypingPatternSuspicious(userData.keystrokeIntervals || {})) {
+    reasons.push("Suspicious typing pattern");
+  }
+
+  if (isUserAgentSuspicious(userData.userAgent || "")) {
+    reasons.push("Suspicious user agent");
+  }
+
+  if (isLanguageSuspicious(userData.acceptLanguage || "")) {
+    reasons.push("Suspicious language header");
+  }
+
+  const isBot = reasons.length > 0;
+  const confidenceScore = isBot ? 1.0 : 0.0;
+  const reason = isBot ? reasons.join("; ") : "No issues detected";
+
+  return { isBot, confidenceScore, reason };
+}
+
+// ------------------------------
+// API Route Handlers (App Router)
+// ------------------------------
 
 export async function POST(req) {
   try {
-    await dbConnect();
-
-    const scriptPath = path.join(process.cwd(), "scripts", "bot_detection.py");
-    const data = await req.json();
-
-    // Extract IP from headers (for logging/tracking)
-    const forwardedFor = req.headers.get("x-forwarded-for");
-    const clientIp = forwardedFor?.split(",")[0]?.trim() || "unknown";
-
-    console.log("Incoming bot check data:", data);
-
-    // Run Python bot detection script
-    const pythonResult = await new Promise((resolve, reject) => {
-      execFile(
-        "python", // explicitly use python
-        [scriptPath, JSON.stringify(data)],
-        (error, stdout, stderr) => {
-          if (error) {
-            console.error("Python exec error:", error, stderr);
-            return reject(stderr || error.message);
-          }
-
-          console.log("Python raw stdout:", stdout);
-
-          try {
-            // Extract JSON object from mixed output
-            const jsonMatch = stdout.match(/\{[\s\S]*\}/);
-            if (!jsonMatch) return reject("No JSON output from Python");
-
-            const result = JSON.parse(jsonMatch[0]);
-            if (result.error) return reject(result.error);
-
-            resolve(result);
-          } catch (err) {
-            console.error("JSON parse error:", err);
-            reject("Invalid JSON from Python: " + stdout);
-          }
-        }
-      );
-    });
-
-    const detectionResult = pythonResult.isBot ? "Bot" : "Human";
-
-    // Save log to DB
-    const log = await BotLog.create({
-      ip: clientIp,
-      userAgent: data.userAgent || "unknown",
-      requestData: data,
-      detectionResult,
-      detectionScore: pythonResult.confidenceScore ?? null,
-      detectionReason: pythonResult.reason ?? "No reason provided",
-      rawPythonResponse: pythonResult,
-    });
-
-    return NextResponse.json({
-      success: true,
-      message:
-        detectionResult === "Bot"
-          ? "Bot detected. Booking blocked."
-          : "No bot detected. Proceed allowed.",
-      detection: {
-        isBot: pythonResult.isBot,
-        confidenceScore: pythonResult.confidenceScore,
-        reason: pythonResult.reason,
-      },
-      detectionResult,
-      logId: log._id,
-    });
+    const body = await req.json();
+    const result = checkBot(body);
+    return Response.json(result, { status: 200 });
   } catch (err) {
-    console.error("Bot check API error:", err);
-    return NextResponse.json(
-      { success: false, error: err.toString() },
-      { status: 500 }
-    );
+    return Response.json({ error: err.message }, { status: 400 });
   }
+}
+
+export async function GET() {
+  return Response.json(
+    { error: "Method not allowed. Use POST." },
+    { status: 405 }
+  );
 }

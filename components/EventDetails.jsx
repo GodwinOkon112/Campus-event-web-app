@@ -214,7 +214,7 @@ export default function EventDetails({ event }) {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
             <h2 className="text-xl font-bold text-red-600 mb-4">
-             Booking Blocked: Bot Detected
+              Booking Blocked: Bot Detected
             </h2>
             <p className="text-gray-700 mb-4">
               Your booking attempt was flagged as a bot.
