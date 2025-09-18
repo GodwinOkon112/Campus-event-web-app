@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export default function GetTicketPage() {
-  const [form, setForm] = useState({ fanName: "", fanEmail: "" });
+  const [form, setForm] = useState({ studentName: "", studentEmail: "" });
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -55,14 +55,14 @@ export default function GetTicketPage() {
     const doc = new jsPDF();
 
     doc.setFontSize(20);
-    doc.text("🎟 Football Match Ticket", 20, 20);
+    doc.text("🎟 Campus Event Ticket", 20, 20);
 
     doc.setFontSize(12);
-    doc.text(`Fan Name: ${ticket.fanName}`, 20, 40);
-    doc.text(`Fan Email: ${ticket.fanEmail}`, 20, 50);
-    doc.text(`Phone: ${ticket.fanPhone || "N/A"}`, 20, 60);
+    doc.text(`Name: ${ticket.studentName}`, 20, 40);
+    doc.text(`Email: ${ticket.studentEmail}`, 20, 50);
+    doc.text(`Phone: ${ticket.studentPhone || "N/A"}`, 20, 60);
 
-    doc.text(`Match: ${ticket.event?.title || "Untitled Match"}`, 20, 80);
+    doc.text(`Event: ${ticket.event?.title || "Untitled Event"}`, 20, 80);
     doc.text(
       `Date: ${
         ticket.event?.date
@@ -79,9 +79,9 @@ export default function GetTicketPage() {
     doc.text(`Paid At: ${new Date(ticket.paidAt).toLocaleString()}`, 20, 140);
 
     doc.setFontSize(10);
-    doc.text("Thank you for booking your match ticket with us!", 20, 160);
+    doc.text("Thank you for booking with us!", 20, 160);
 
-    doc.save(`MatchTicket_${ticket.reference}.pdf`);
+    doc.save(`Ticket_${ticket.reference}.pdf`);
   };
 
   return (
@@ -89,7 +89,7 @@ export default function GetTicketPage() {
       <Navbar />
       <div className="max-w-3xl mx-auto px-6 py-12">
         <h3 className="text-3xl font-bold mb-6 text-center">
-          Find Your Match Tickets
+          Find Your Tickets
         </h3>
 
         {/* Search Form */}
@@ -101,11 +101,11 @@ export default function GetTicketPage() {
             <label className="block text-gray-700">Full Name</label>
             <input
               type="text"
-              name="fanName"
-              value={form.fanName}
+              name="studentName"
+              value={form.studentName}
               onChange={handleChange}
               required
-              className="w-full border rounded px-3 py-2 mt-1 focus:ring-2 focus:ring-green-600 outline-none"
+              className="w-full border rounded px-3 py-2 mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Enter your full name"
             />
           </div>
@@ -113,18 +113,18 @@ export default function GetTicketPage() {
             <label className="block text-gray-700">Email</label>
             <input
               type="email"
-              name="fanEmail"
-              value={form.fanEmail}
+              name="studentEmail"
+              value={form.studentEmail}
               onChange={handleChange}
               required
-              className="w-full border rounded px-3 py-2 mt-1 focus:ring-2 focus:ring-green-600 outline-none"
+              className="w-full border  rounded px-3 py-2 mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Enter your email"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-700 text-white py-2 rounded hover:bg-green-800 transition"
+            className="w-full bg-dark text-white py-2 hover:bg-blue-700 transition"
           >
             {loading ? "Fetching Tickets..." : "Get My Tickets"}
           </button>
@@ -136,8 +136,9 @@ export default function GetTicketPage() {
         {/* No Tickets Found */}
         {noTickets && !loading && !error && (
           <p className="mt-4 text-red-600 text-center">
-            We couldn’t find any tickets for <b>{form.fanName}</b> with email{" "}
-            <b>{form.fanEmail}</b>. It looks like you haven’t booked yet.
+            We couldn’t find any tickets for <b>{form.studentName}</b> with
+            email <b>{form.studentEmail}</b>. It looks like you haven’t booked
+            yet.
           </p>
         )}
 
@@ -145,17 +146,15 @@ export default function GetTicketPage() {
         <div className="mt-8">
           {tickets.length > 0 && (
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold">
-                Your Booked Match Tickets:
-              </h2>
+              <h2 className="text-xl font-semibold">Your Booked Tickets:</h2>
               {tickets.map((ticket) => (
                 <div
                   key={ticket._id}
                   className="border rounded-lg p-4 shadow hover:shadow-md transition"
                 >
-                  {/* Match Info */}
+                  {/* Event Info */}
                   <p className="font-bold">
-                    {ticket.event?.title || "Untitled Match"}
+                    {ticket.event?.title || "Untitled Event"}
                   </p>
                   <p className="text-sm text-gray-600">
                     {ticket.event?.date
@@ -165,7 +164,7 @@ export default function GetTicketPage() {
                   </p>
 
                   {/* Payment Info */}
-                  <p className="text-green-700 font-semibold">
+                  <p className="text-blue-600 font-semibold">
                     Paid: ₦{ticket.amount}
                   </p>
                   <p className="text-sm text-gray-500">

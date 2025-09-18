@@ -8,7 +8,7 @@ export default function Footer() {
         {/* Logo */}
         <Link
           href="/"
-          className="text-2xl font-extrabold text-green-700 no-underline"
+          className="text-2xl font-extrabold text-blue-700 no-underline"
         >
           Evently
         </Link>

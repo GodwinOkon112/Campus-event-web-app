@@ -8,19 +8,16 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-white border-b sticky top-0 z-50 shadow-md">
+    <nav className="bg-white border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo */}
-        <Link
-          href="/"
-          className="text-2xl font-extrabold text-green-700 no-underline"
-        >
+        <Link href="/" className="text-2xl font-bold text-dark no-underline">
           Evently
         </Link>
 
         {/* Hamburger Toggle */}
         <button
-          className="md:hidden text-gray-700 hover:text-green-700 focus:outline-none"
+          className="md:hidden text-gray-700 hover:text-dark focus:outline-none"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? (
@@ -34,19 +31,19 @@ export default function Navbar() {
         <div className="hidden md:flex space-x-6">
           <Link
             href="/"
-            className="font-bold text-gray-800 hover:text-green-700 no-underline"
+            className=" font-bold text-dark no-underline hover:text-dark"
           >
             Home
           </Link>
           <Link
             href="#featured"
-            className="font-bold text-gray-800 hover:text-green-700 no-underline"
+            className=" font-bold text-dark no-underline hover:text-dark"
           >
-            Matches
+            Events
           </Link>
           <Link
             href="/get-ticket"
-            className="font-bold text-gray-800 hover:text-green-700 no-underline"
+            className=" font-bold text-dark no-underline hover:text-dark"
           >
             Tickets
           </Link>
@@ -55,23 +52,23 @@ export default function Navbar() {
 
       {/* Menu (Small Screen) */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-sm">
+        <div className="md:hidden bg-white border-t border-gray-200">
           <div className="flex flex-col space-y-2 px-4 py-4">
             <Link
               href="/"
-              className="font-bold text-gray-800 hover:text-green-700 no-underline"
+              className=" font-bold text-dark no-underline hover:text-dark"
             >
               Home
             </Link>
             <Link
               href="#featured"
-              className="font-bold text-gray-800 hover:text-green-700 no-underline"
+              className=" font-bold text-dark no-underline hover:text-dark"
             >
-              Matches
+              Events
             </Link>
             <Link
               href="/get-ticket"
-              className="font-bold text-gray-800 hover:text-green-700 no-underline"
+              className=" font-bold text-dark no-underline hover:text-dark"
             >
               Tickets
             </Link>

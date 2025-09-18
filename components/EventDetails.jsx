@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 export default function EventDetails({ event }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
   const [loading, setLoading] = useState(false);
-  const [botModal, setBotModal] = useState(null);
+  const [botModal, setBotModal] = useState(null); // 🚨 Store bot detection details
   const getTrackingData = useBotTracking();
 
   function handleChange(e) {
@@ -23,7 +23,7 @@ export default function EventDetails({ event }) {
 
     setLoading(true);
 
-    // ✅ Tracking data
+    // 1️⃣ Gather tracking + form data
     const trackingData = getTrackingData();
     const botCheckPayload = {
       eventId: event._id,
@@ -38,7 +38,7 @@ export default function EventDetails({ event }) {
       acceptLanguage: navigator.language || navigator.userLanguage || "unknown",
     };
 
-    // ✅ Bot check
+    // 2️⃣ Call bot detection API
     let botData;
     try {
       const botCheckRes = await fetch("/api/admin/check-bot", {
@@ -58,17 +58,18 @@ export default function EventDetails({ event }) {
       return;
     }
 
+    // 3️⃣ Stop + Show Modal if bot detected
     if (
       botData.isBot ||
       botData.detection?.isBot ||
       botData.detectionResult === "Bot"
     ) {
-      setBotModal(botData);
+      setBotModal(botData); // open modal with details
       setLoading(false);
       return;
     }
 
-    // ✅ Paystack Payment
+    // 4️⃣ Proceed with Paystack payment
     try {
       const paystack = new PaystackPop();
       paystack.newTransaction({
@@ -87,17 +88,20 @@ export default function EventDetails({ event }) {
               body: JSON.stringify({
                 reference: transaction.reference,
                 eventId: event._id,
-                fan: form,
+                student: form,
               }),
             });
 
             const data = await res.json();
             if (data.success) {
-              toast.success("Payment successful! Your match ticket is booked.");
+              toast.success("Payment successful! Ticket booked.");
               setForm({ name: "", email: "", phone: "" });
 
+              // ✅ FRAUD0 Conversion Tag
               if (typeof window !== "undefined") {
                 window.fraud0 = window.fraud0 || [];
+                // fraud0’s example: fraud0.push([1]);
+                // Better: include unique transaction ref
                 window.fraud0.push([transaction.reference]);
                 console.log("Fraud0 conversion tag fired:", window.fraud0);
               }
@@ -147,11 +151,11 @@ export default function EventDetails({ event }) {
       <h1 className="text-3xl font-bold mb-4">{event.title}</h1>
       <p className="text-gray-700 mb-2">{event.description}</p>
       <p className="text-gray-500 mb-2">
-        Match Date: {new Date(event.date).toLocaleDateString()}
+        Date: {new Date(event.date).toLocaleDateString()}
       </p>
-      <p className="text-gray-500 mb-2">Kickoff Time: {event.time}</p>
+      <p className="text-gray-500 mb-2">Time: {event.time}</p>
       <p className="text-blue-600 font-bold mb-4">
-        Ticket Price: {event.price ? `₦${event.price}` : "Free"}
+        Price: {event.price ? `₦${event.price}` : "Free"}
       </p>
 
       <span
@@ -167,7 +171,7 @@ export default function EventDetails({ event }) {
       </span>
 
       <div className="border rounded p-4 shadow">
-        <h2 className="text-lg font-semibold mb-4">Book Match Ticket</h2>
+        <h2 className="text-lg font-semibold mb-4">Book Ticket</h2>
 
         <input
           type="text"
@@ -199,7 +203,7 @@ export default function EventDetails({ event }) {
         <button
           onClick={handlePayment}
           disabled={loading}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full"
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 w-full"
         >
           {loading ? "Checking..." : `Pay ₦${event.price}`}
         </button>
@@ -210,10 +214,10 @@ export default function EventDetails({ event }) {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
             <h2 className="text-xl font-bold text-red-600 mb-4">
-              Booking Blocked: Bot Detected
+             Booking Blocked: Bot Detected
             </h2>
             <p className="text-gray-700 mb-4">
-              Your attempt to book a football ticket was flagged as automated.
+              Your booking attempt was flagged as a bot.
             </p>
 
             <ul className="list-disc pl-6 space-y-1 text-sm text-gray-600">
